@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学生端满意度评价弹窗 · 可交互 Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 14px 16px;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .scene-tab {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .scene-tab:hover {
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+    .scene-tab.active {
+      background: #ea580c;
+      border-color: #ea580c;
+      color: #ffffff;
+    }
+    .q-picker {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748b;
+    }
+    .q-picker select {
+      background: #f8fafc;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 12px;
+      outline: none;
+      cursor: pointer;
+    }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    @media (max-width: 720px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+    .viewport {
+      position: relative;
+      border-radius: 14px;
+      background: radial-gradient(circle at 50% 24%, #26354d 0%, #0f172a 100%);
+      border: 1px solid #1e293b;
+      min-height: 368px;
+      padding: 62px 18px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hud {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: #cbd5e1;
+      opacity: 0.72;
+    }
+    .popup-card {
+      position: relative;
+      width: 100%;
+      max-width: 370px;
+      background: #fffdf7;
+      border: 2px solid #fbbf24;
+      border-radius: 18px;
+      padding: 30px 20px 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.42);
+      color: #1e293b;
+    }
+    .fox-holder {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -56px;
+      pointer-events: none;
+    }
+    @keyframes earWiggle {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(2.5deg); }
+    }
+    .fox-mascot {
+      animation: earWiggle 3.2s ease-in-out infinite;
+      transform-origin: 50% 85%;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.18));
+    }
+    .btn-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: none;
+      background: #f1f5f9;
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .btn-close:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .badge-row {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .ctx-badge {
+      display: inline-block;
+      background: #ffedd5;
+      color: #c2410c;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .q-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 3px;
+    }
+    .fox-speech {
+      text-align: center;
+      font-size: 12px;
+      color: #9a3412;
+      margin-bottom: 10px;
+    }
+    .stars-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .star-btn {
+      background: transparent;
+      border: none;
+      padding: 3px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .star-btn:hover { transform: scale(1.15); }
+    .star-btn:active { transform: scale(0.94); }
+    .scale-labels {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      margin-bottom: 14px;
+      font-size: 11.5px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .scale-selected {
+      color: #ea580c;
+      font-weight: 700;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 9px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      transition: opacity 0.15s;
+    }
+    .result-box {
+      text-align: center;
+      color: #f8fafc;
+      padding: 0 16px;
+    }
+    .result-box .emoji { font-size: 28px; margin-bottom: 6px; }
+    .result-box .r-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .result-box .r-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 12px; }
+    .btn-reset {
+      background: #fb923c;
+      color: #0f172a;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .inspector {
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .ins-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .status-pill {
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: #ffedd5;
+      color: #c2410c;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: #1e293b;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .ins-foot {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e2e8f0;
+      color: #475569;
+      line-height: 1.5;
+      font-size: 11.5px;
+    }
+    .ins-foot strong { color: #0f172a; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="tabs">
+        <button data-scene="l2" class="scene-tab active">第2课时 · 游戏评价(1/3)</button>
+        <button data-scene="l10_hard" class="scene-tab">第10课时 · 难度(&lt;2星)</button>
+        <button data-scene="l10_easy" class="scene-tab">第10课时 · 难度(&gt;=2星)</button>
+        <button data-scene="l18" class="scene-tab">第18课时 · 游戏评价(3/3)</button>
+      </div>
+      <label id="game-q-wrap" class="q-picker">
+        <span>抽中题目:</span>
+        <select id="game-q-select">
+          <option value="rate_overall">总体评分 · 喜欢这个游戏吗？</option>
+          <option value="rate_guidance">教程引导 · 你清楚这个游戏的规则吗？</option>
+          <option value="rate_ui">界面体验 · 你喜欢这个游戏的画面吗？</option>
+          <option value="rate_interaction">操作体验 · 你觉得这个游戏好不好操作？</option>
+          <option value="rate_fun">游戏趣味性 · 你喜欢这个游戏的玩法吗？</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="main-grid">
+      <div class="viewport">
+        <div class="hud">
+          <span id="bg-hud-left">专注力训练课 · 第 2 课时</span>
+          <span>本游戏次数 3/3 已完成 · 即将进入下一游戏</span>
+        </div>
+
+        <div id="popup-card" class="popup-card">
+          <div class="fox-holder">
+            <svg class="fox-mascot" width="112" height="84" viewBox="0 0 120 90" fill="none">
+              <defs>
+                <linearGradient id="foxFur" x1="60" y1="8" x2="60" y2="78" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#ea580c"/>
+                </linearGradient>
+                <linearGradient id="foxEarDark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ea580c"/><stop offset="100%" stop-color="#c2410c"/>
+                </linearGradient>
+              </defs>
+              <g id="fox-sparkles" opacity="0">
+                <path d="M14 22 L16 27 L21 29 L16 31 L14 36 L12 31 L7 29 L12 27 Z" fill="#fbbf24"/>
+                <path d="M106 18 L107.6 22 L112 23.6 L107.6 25.2 L106 29.2 L104.4 25.2 L100 23.6 L104.4 22 Z" fill="#fbbf24"/>
+              </g>
+              <path d="M26 42 L18 8 Q17 3 22 6 L46 24 Z" fill="url(#foxEarDark)"/>
+              <path d="M28 36 L22 13 Q22 10 25 12 L41 25 Z" fill="#ffedd5"/>
+              <path d="M18 8 Q17 3 22 6 L27 10 L19.5 14 Z" fill="#431407"/>
+              <path d="M94 42 L102 8 Q103 3 98 6 L74 24 Z" fill="url(#foxEarDark)"/>
+              <path d="M92 36 L98 13 Q98 10 95 12 L79 25 Z" fill="#ffedd5"/>
+              <path d="M102 8 Q103 3 98 6 L93 10 L100.5 14 Z" fill="#431407"/>
+              <path d="M22 52 Q16 55 21 61 Q18 65 26 67 C34 74 46 77 60 77 C74 77 86 74 94 67 Q102 65 99 61 Q104 55 98 52 C97 32 82 20 60 20 C38 20 23 32 22 52 Z" fill="url(#foxFur)"/>
+              <path d="M55 21 Q58 14 61 19 Q64 15 65 21 Z" fill="#fb923c"/>
+              <path d="M22 55 Q19 60 25 65 C34 74 46 77 60 77 C74 77 86 74 95 65 Q101 60 98 55 C90 52 78 55 68 62 L60 66 L52 62 C42 55 30 52 22 55 Z" fill="#fff7ed"/>
+              <ellipse cx="36" cy="61" rx="6.5" ry="3.6" fill="#fda4af" opacity="0.72"/>
+              <ellipse cx="84" cy="61" rx="6.5" ry="3.6" fill="#fda4af" opacity="0.72"/>
+              <g id="fox-eyes-normal">
+                <circle cx="43" cy="49" r="5.2" fill="#292524"/>
+                <circle cx="41.3" cy="47.2" r="1.9" fill="#ffffff"/>
+                <circle cx="44.8" cy="50.8" r="0.9" fill="#ffffff"/>
+                <circle cx="77" cy="49" r="5.2" fill="#292524"/>
+                <circle cx="75.3" cy="47.2" r="1.9" fill="#ffffff"/>
+                <circle cx="78.8" cy="50.8" r="0.9" fill="#ffffff"/>
+              </g>
+              <g id="fox-eyes-happy" style="display:none;">
+                <path d="M37 50 Q43 43 49 50" stroke="#292524" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <path d="M71 50 Q77 43 83 50" stroke="#292524" stroke-width="3" stroke-linecap="round" fill="none"/>
+              </g>
+              <g id="fox-brows-caring" style="display:none;">
+                <path d="M37 41 Q43 39 48 42" stroke="#7c2d12" stroke-width="2" stroke-linecap="round" fill="none"/>
+                <path d="M83 41 Q77 39 72 42" stroke="#7c2d12" stroke-width="2" stroke-linecap="round" fill="none"/>
+              </g>
+              <path d="M56 58 Q60 56.5 64 58 L61.2 62.2 Q60 63.5 58.8 62.2 Z" fill="#431407"/>
+              <ellipse cx="59" cy="58.5" rx="1.4" ry="0.7" fill="#ffffff" opacity="0.65"/>
+              <path id="fox-mouth-smile" d="M54.5 65.5 Q57.2 68.8 60 65.8 Q62.8 68.8 65.5 65.5" stroke="#431407" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <path id="fox-mouth-big" style="display:none;" d="M54 65 Q60 73 66 65 Z" fill="#fb7185" stroke="#431407" stroke-width="1.8" stroke-linejoin="round"/>
+              <g>
+                <ellipse cx="37" cy="78" rx="9" ry="6" fill="#ea580c" stroke="#c2410c" stroke-width="1.2"/>
+                <ellipse cx="37" cy="79.2" rx="6" ry="3.5" fill="#fff7ed"/>
+                <line x1="34.5" y1="77" x2="34.5" y2="81" stroke="#c2410c" stroke-width="1.1" stroke-linecap="round"/>
+                <line x1="39.5" y1="77" x2="39.5" y2="81" stroke="#c2410c" stroke-width="1.1" stroke-linecap="round"/>
+                <ellipse cx="83" cy="78" rx="9" ry="6" fill="#ea580c" stroke="#c2410c" stroke-width="1.2"/>
+                <ellipse cx="83" cy="79.2" rx="6" ry="3.5" fill="#fff7ed"/>
+                <line x1="80.5" y1="77" x2="80.5" y2="81" stroke="#c2410c" stroke-width="1.1" stroke-linecap="round"/>
+                <line x1="85.5" y1="77" x2="85.5" y2="81" stroke="#c2410c" stroke-width="1.1" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <button id="btn-close" class="btn-close" title="主动关闭（不记分，扣减1次课程配额）">✕</button>
+
+          <div class="badge-row">
+            <span id="context-badge" class="ctx-badge">星际记忆矩阵 · 本课时已完成 3/3 次</span>
+          </div>
+          <h3 id="question-title" class="q-title">喜欢这个游戏吗？</h3>
+          <p id="fox-speech" class="fox-speech">小狐狸想听听你的真实感受，点一点星星吧～</p>
+
+          <div id="stars-row" class="stars-row"></div>
+
+          <div class="scale-labels">
+            <span id="label-min">1星：一点也不</span>
+            <span id="label-selected" class="scale-selected">请点击星星评分</span>
+            <span id="label-max">5星：超级喜欢</span>
+          </div>
+
+          <button id="btn-submit" class="btn-submit" disabled>提交并进入下一个游戏</button>
+        </div>
+
+        <div id="result-state" class="result-box hidden">
+          <div class="emoji">🦊</div>
+          <div id="result-title" class="r-title">小狐狸收到啦！正在进入下一个游戏…</div>
+          <div id="result-desc" class="r-desc">本课程剩余弹窗配额：2 / 3 次</div>
+          <button id="btn-reset" class="btn-reset">重新预览弹窗</button>
+        </div>
+      </div>
+
+      <div class="inspector">
+        <div>
+          <div class="ins-head">
+            <span>实时埋点上报预览</span>
+            <span id="status-pill" class="status-pill">曝光中</span>
+          </div>
+          <pre id="payload-box"></pre>
+        </div>
+        <div class="ins-foot">
+          <div>• <strong>IP 亲和引导</strong>：卡通小狐狸搭在弹窗上沿互动，随选星呈现倾听/微笑/开心表情（“难吗”保持中性鼓励）。</div>
+          <div>• <strong>防误判与防空交</strong>：标明 1星/5星两端语义；未选星置灰，点 ✕ 记 <code>closed</code> 且分数为 <code>null</code>。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GAME_QUESTIONS = {
+      rate_overall: {
+        dim: '总体评分', title: '喜欢这个游戏吗？',
+        min: '1星：一点也不', max: '5星：超级喜欢',
+        words: ['一点也不喜欢', '不太喜欢', '一般般', '比较喜欢', '超级喜欢！']
+      },
+      rate_guidance: {
+        dim: '教程引导', title: '你清楚这个游戏的规则吗？',
+        min: '1星：完全不懂', max: '5星：非常清楚',
+        words: ['完全没看懂', '有点迷糊', '大概明白', '比较清楚', '非常清楚！']
+      },
+      rate_ui: {
+        dim: '界面体验', title: '你喜欢这个游戏的画面吗？',
+        min: '1星：不喜欢', max: '5星：非常好看',
+        words: ['一点不喜欢', '不太好看', '一般般', '挺好看的', '非常好看！']
+      },
+      rate_interaction: {
+        dim: '操作体验', title: '你觉得这个游戏好不好操作？',
+        min: '1星：很难按准', max: '5星：非常顺手',
+        words: ['很难操作', '不太顺手', '一般般', '比较好用', '非常顺手！']
+      },
+      rate_fun: {
+        dim: '游戏趣味性', title: '你喜欢这个游戏的玩法吗？',
+        min: '1星：很无聊', max: '5星：太好玩了',
+        words: ['觉得很无聊', '不太好玩', '一般般', '挺好玩的', '太好玩了！']
+      }
+    };
+
+    const SCENES = {
+      l2: {
+        lesson_no: 2, quotaLeftAfter: '2 / 3 次',
+        hudLeft: '专注力训练课 · 第 2 课时',
+        badge: '星际记忆矩阵 · 本课时已完成 3/3 次',
+        stage: 6, trigger: '节点1_第2课时游戏评价', type: 'game'
+      },
+      l10_hard: {
+        lesson_no: 10, quotaLeftAfter: '1 / 3 次',
+        hudLeft: '专注力训练课 · 第 10 课时',
+        badge: '方块旋转 · 第 9 关（结算 1 星）',
+        stage: 9, trigger: '节点2_第10课时难度评价_小于2星', type: 'diff',
+        item_id: 'rate_difficulty_hard', dim: '难度适配', title: '你觉得这一关难吗？',
+        min: '1星：一点不难', max: '5星：非常难',
+        words: ['一点也不难', '不太难', '难度适中', '有点难', '非常难！（后台按6-5=1换算）']
+      },
+      l10_easy: {
+        lesson_no: 10, quotaLeftAfter: '1 / 3 次',
+        hudLeft: '专注力训练课 · 第 10 课时',
+        badge: '方块旋转 · 第 9 关（结算 3 星）',
+        stage: 9, trigger: '节点2_第10课时难度评价_大于等于2星', type: 'diff',
+        item_id: 'rate_difficulty_easy', dim: '难度适配', title: '你觉得这一关简单吗？',
+        min: '1星：一点不简单', max: '5星：非常简单',
+        words: ['一点不简单', '不太简单', '难度适中', '比较简单', '非常简单！']
+      },
+      l18: {
+        lesson_no: 18, quotaLeftAfter: '0 / 3 次（本课程配额全部完成）',
+        hudLeft: '专注力训练课 · 第 18 课时',
+        badge: '森林寻踪 · 本课时已完成 2/2 次',
+        stage: 14, trigger: '节点3_第18课时游戏评价_避重抽取', type: 'game'
+      }
+    };
+
+    let state = { sceneKey: 'l2', gameItemKey: 'rate_overall', score: null, hoverScore: null, action: 'pending' };
+
+    const starsRow = document.getElementById('stars-row');
+    const gameQWrap = document.getElementById('game-q-wrap');
+    const gameQSelect = document.getElementById('game-q-select');
+    const popupCard = document.getElementById('popup-card');
+    const resultState = document.getElementById('result-state');
+    const btnSubmit = document.getElementById('btn-submit');
+    const payloadBox = document.getElementById('payload-box');
+    const statusPill = document.getElementById('status-pill');
+
+    function getCurrentQ() {
+      const sc = SCENES[state.sceneKey];
+      if (sc.type === 'diff') {
+        return { item_id: sc.item_id, dim: sc.dim, title: sc.title, min: sc.min, max: sc.max, words: sc.words };
+      }
+      return { item_id: state.gameItemKey, ...GAME_QUESTIONS[state.gameItemKey] };
+    }
+
+    function updateFoxExpression(val) {
+      const eyesNormal = document.getElementById('fox-eyes-normal');
+      const eyesHappy = document.getElementById('fox-eyes-happy');
+      const browsCaring = document.getElementById('fox-brows-caring');
+      const mouthSmile = document.getElementById('fox-mouth-smile');
+      const mouthBig = document.getElementById('fox-mouth-big');
+      const sparkles = document.getElementById('fox-sparkles');
+      const speech = document.getElementById('fox-speech');
+      const isHardItem = getCurrentQ().item_id === 'rate_difficulty_hard';
+
+      if (!val) {
+        eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
+        browsCaring.style.display = 'none'; mouthSmile.style.display = 'block';
+        mouthBig.style.display = 'none'; sparkles.setAttribute('opacity', '0');
+        speech.textContent = '小狐狸想听听你的真实感受，点一点星星吧～';
+      } else if (isHardItem) {
+        eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
+        browsCaring.style.display = val >= 4 ? 'block' : 'none';
+        mouthSmile.style.display = 'block'; mouthBig.style.display = 'none';
+        sparkles.setAttribute('opacity', '0');
+        speech.textContent = val >= 4 ? '收到啦，小狐狸记下来帮你调整节奏！' : '明白啦，谢谢你告诉小狐狸～';
+      } else if (val >= 4) {
+        eyesNormal.style.display = 'none'; eyesHappy.style.display = 'block';
+        browsCaring.style.display = 'none';
+        mouthSmile.style.display = val === 5 ? 'none' : 'block';
+        mouthBig.style.display = val === 5 ? 'block' : 'none';
+        sparkles.setAttribute('opacity', '1');
+        speech.textContent = '太棒啦！小狐狸收到你的星星咯～';
+      } else if (val <= 2) {
+        eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
+        browsCaring.style.display = 'block'; mouthSmile.style.display = 'block';
+        mouthBig.style.display = 'none'; sparkles.setAttribute('opacity', '0');
+        speech.textContent = '谢谢你的真实反馈，小狐狸会努力变得更好玩！';
+      } else {
+        eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
+        browsCaring.style.display = 'none'; mouthSmile.style.display = 'block';
+        mouthBig.style.display = 'none'; sparkles.setAttribute('opacity', '0');
+        speech.textContent = '收到啦，谢谢你告诉小狐狸～';
+      }
+    }
+
+    function renderStars() {
+      starsRow.innerHTML = '';
+      const activeVal = state.hoverScore ?? state.score ?? 0;
+      for (let i = 1; i <= 5; i++) {
+        const lit = i <= activeVal;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'star-btn';
+        btn.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="${lit ? '#f59e0b' : '#e2e8f0'}" stroke="${lit ? '#d97706' : '#cbd5e1'}" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+        btn.addEventListener('mouseenter', () => { state.hoverScore = i; updateLabelsAndStars(); });
+        btn.addEventListener('mouseleave', () => { state.hoverScore = null; updateLabelsAndStars(); });
+        btn.addEventListener('click', () => { state.score = i; state.action = 'pending'; render(); });
+        starsRow.appendChild(btn);
+      }
+    }
+
+    function updateLabelsAndStars() {
+      renderStars();
+      const q = getCurrentQ();
+      const activeVal = state.hoverScore ?? state.score;
+      document.getElementById('label-selected').textContent = activeVal ? `${activeVal} 星 · ${q.words[activeVal - 1]}` : '请点击星星评分';
+      updateFoxExpression(activeVal);
+    }
+
+    function renderPayload() {
+      const sc = SCENES[state.sceneKey];
+      const q = getCurrentQ();
+      const payload = {
+        course_id: 'course_demo_01',
+        lesson_no: sc.lesson_no,
+        popup_id: `pop_${sc.lesson_no}_8f3a21`,
+        trigger_reason: sc.trigger,
+        popup_action: state.action === 'pending' ? '(等待操作)' : state.action,
+        ContentId: state.sceneKey === 'l18' ? 'game_demo_02' : 'game_demo_01',
+        content_version: 'v1.4.0',
+        stage: sc.stage,
+        stage_type: '正式关',
+        satisfaction_dimension: q.dim,
+        satisfaction_item_id: q.item_id,
+        satisfaction_score: state.action === 'closed' ? null : state.score
+      };
+      payloadBox.textContent = JSON.stringify(payload, null, 2);
+      statusPill.textContent = state.action === 'submitted' ? 'submitted (记分)' : state.action === 'closed' ? 'closed (不记分/扣配额)' : (state.score ? `已选 ${state.score} 星` : '曝光中');
+    }
+
+    function render() {
+      const sc = SCENES[state.sceneKey];
+      const q = getCurrentQ();
+      document.querySelectorAll('.scene-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.scene === state.sceneKey);
+      });
+      gameQWrap.style.display = sc.type === 'game' ? 'flex' : 'none';
+      document.getElementById('bg-hud-left').textContent = sc.hudLeft;
+      document.getElementById('context-badge').textContent = sc.badge;
+      document.getElementById('question-title').textContent = q.title;
+      document.getElementById('label-min').textContent = q.min;
+      document.getElementById('label-max').textContent = q.max;
+
+      if (state.action === 'pending') {
+        popupCard.classList.remove('hidden');
+        resultState.classList.add('hidden');
+      } else {
+        popupCard.classList.add('hidden');
+        resultState.classList.remove('hidden');
+        document.getElementById('result-title').textContent = state.action === 'submitted'
+          ? `小狐狸收到啦（${state.score} 星）！正在进入下一个游戏…`
+          : '已关闭弹窗（不记分数），正在进入下一个游戏…';
+        document.getElementById('result-desc').textContent = `已扣减 1 次课程弹窗额度 · 本课程剩余配额：${sc.quotaLeftAfter}`;
+      }
+
+      if (state.score) {
+        btnSubmit.disabled = false;
+        btnSubmit.style.background = 'linear-gradient(90deg, #fb923c 0%, #f59e0b 100%)';
+        btnSubmit.style.color = '#ffffff';
+        btnSubmit.style.cursor = 'pointer';
+      } else {
+        btnSubmit.disabled = true;
+        btnSubmit.style.background = '#e2e8f0';
+        btnSubmit.style.color = '#94a3b8';
+        btnSubmit.style.cursor = 'not-allowed';
+      }
+      updateLabelsAndStars();
+      renderPayload();
+    }
+
+    document.querySelectorAll('.scene-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.sceneKey = btn.dataset.scene;
+        if (state.sceneKey === 'l18' && state.gameItemKey === 'rate_overall') {
+          state.gameItemKey = 'rate_fun';
+          gameQSelect.value = 'rate_fun';
+        }
+        state.score = null; state.action = 'pending'; render();
+      });
+    });
+    gameQSelect.addEventListener('change', (e) => { state.gameItemKey = e.target.value; state.score = null; state.action = 'pending'; render(); });
+    btnSubmit.addEventListener('click', () => { if (!state.score) return; state.action = 'submitted'; render(); });
+    document.getElementById('btn-close').addEventListener('click', () => { state.action = 'closed'; state.score = null; render(); });
+    document.getElementById('btn-reset').addEventListener('click', () => { state.action = 'pending'; state.score = null; render(); });
+    render();
+  </script>
+</body>
+</html>
