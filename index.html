@@ -149,13 +149,13 @@
       color: #9a3412;
       margin-bottom: 14px;
     }
-    .stars-grid {
+    .paws-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 4px;
       margin-bottom: 16px;
     }
-    .star-col {
+    .paw-col {
       background: transparent;
       border: none;
       padding: 4px 2px;
@@ -167,9 +167,9 @@
       gap: 5px;
       transition: transform 0.15s ease;
     }
-    .star-col:hover { transform: translateY(-2px) scale(1.06); }
-    .star-col:active { transform: scale(0.96); }
-    .star-label {
+    .paw-col:hover { transform: translateY(-2px) scale(1.07); }
+    .paw-col:active { transform: scale(0.94); }
+    .paw-label {
       font-size: 12px;
       line-height: 1.2;
       white-space: nowrap;
@@ -335,9 +335,9 @@
           <button id="btn-close" class="btn-close" title="主动关闭（不记分，扣减1次课程配额）">✕</button>
 
           <h3 id="question-title" class="q-title">喜欢这个游戏吗？</h3>
-          <p id="fox-speech" class="fox-speech">小狐狸想听听你的真实感受，点一点星星吧～</p>
+          <p id="fox-speech" class="fox-speech">小狐狸想听听你的真实感受，点一点爪印吧～</p>
 
-          <div id="stars-row" class="stars-grid"></div>
+          <div id="paws-row" class="paws-grid"></div>
 
           <button id="btn-submit" class="btn-submit" disabled>提交</button>
         </div>
@@ -359,8 +359,8 @@
           <pre id="payload-box"></pre>
         </div>
         <div class="ins-foot">
-          <div>• <strong>逐星文字标注</strong>：1～5 星每颗下方均写出对应语义词，学生一眼看懂每一档含义。</div>
-          <div>• <strong>极简操作按钮</strong>：未选星时“提交”置灰防空交；点 ✕ 记 <code>closed</code> 且分数为 <code>null</code>。</div>
+          <div>• <strong>小狐狸爪印图标</strong>：呼应品牌 IP 且与游戏内通关五角星完全区分，每档下方标明对应文字。</div>
+          <div>• <strong>极简操作按钮</strong>：未选时“提交”置灰防空交；点 ✕ 记 <code>closed</code> 且分数为 <code>null</code>。</div>
         </div>
       </div>
     </div>
@@ -397,7 +397,7 @@
 
     let state = { sceneKey: 'l2', gameItemKey: 'rate_overall', score: null, hoverScore: null, action: 'pending' };
 
-    const starsRow = document.getElementById('stars-row');
+    const pawsRow = document.getElementById('paws-row');
     const gameQWrap = document.getElementById('game-q-wrap');
     const gameQSelect = document.getElementById('game-q-select');
     const popupCard = document.getElementById('popup-card');
@@ -410,6 +410,20 @@
       const sc = SCENES[state.sceneKey];
       if (sc.type === 'diff') return { item_id: sc.item_id, title: sc.title, labels: sc.labels };
       return { item_id: state.gameItemKey, ...GAME_QUESTIONS[state.gameItemKey] };
+    }
+
+    function svgPaw(lit) {
+      const fill = lit ? '#fb923c' : '#e2e8f0';
+      const stroke = lit ? '#c2410c' : '#cbd5e1';
+      const innerPad = lit ? '#ffedd5' : '#f8fafc';
+      return `<svg width="38" height="38" viewBox="0 0 24 24" fill="none">
+        <ellipse cx="12" cy="15.8" rx="5.3" ry="4.3" fill="${fill}" stroke="${stroke}" stroke-width="1.35"/>
+        <ellipse cx="12" cy="16.4" rx="2.7" ry="2" fill="${innerPad}" opacity="0.75"/>
+        <ellipse cx="6.4" cy="10.3" rx="2.1" ry="2.7" transform="rotate(-18 6.4 10.3)" fill="${fill}" stroke="${stroke}" stroke-width="1.25"/>
+        <ellipse cx="10.0" cy="7.5" rx="2.1" ry="2.8" transform="rotate(-6 10.0 7.5)" fill="${fill}" stroke="${stroke}" stroke-width="1.25"/>
+        <ellipse cx="14.0" cy="7.5" rx="2.1" ry="2.8" transform="rotate(6 14.0 7.5)" fill="${fill}" stroke="${stroke}" stroke-width="1.25"/>
+        <ellipse cx="17.6" cy="10.3" rx="2.1" ry="2.7" transform="rotate(18 17.6 10.3)" fill="${fill}" stroke="${stroke}" stroke-width="1.25"/>
+      </svg>`;
     }
 
     function updateFoxExpression(val) {
@@ -426,7 +440,7 @@
         eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
         browsCaring.style.display = 'none'; mouthSmile.style.display = 'block';
         mouthBig.style.display = 'none'; sparkles.setAttribute('opacity', '0');
-        speech.textContent = '小狐狸想听听你的真实感受，点一点星星吧～';
+        speech.textContent = '小狐狸想听听你的真实感受，点一点爪印吧～';
       } else if (isHardItem) {
         eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
         browsCaring.style.display = val >= 4 ? 'block' : 'none';
@@ -439,7 +453,7 @@
         mouthSmile.style.display = val === 5 ? 'none' : 'block';
         mouthBig.style.display = val === 5 ? 'block' : 'none';
         sparkles.setAttribute('opacity', '1');
-        speech.textContent = '太棒啦！小狐狸收到你的星星咯～';
+        speech.textContent = '太棒啦！小狐狸收到你的爪印咯～';
       } else if (val <= 2) {
         eyesNormal.style.display = 'block'; eyesHappy.style.display = 'none';
         browsCaring.style.display = 'block'; mouthSmile.style.display = 'block';
@@ -453,8 +467,8 @@
       }
     }
 
-    function renderStars() {
-      starsRow.innerHTML = '';
+    function renderPaws() {
+      pawsRow.innerHTML = '';
       const q = getCurrentQ();
       const activeVal = state.hoverScore ?? state.score ?? 0;
       for (let i = 1; i <= 5; i++) {
@@ -462,20 +476,20 @@
         const isCurrent = i === activeVal;
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'star-col';
+        btn.className = 'paw-col';
         btn.innerHTML = `
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="${lit ? '#f59e0b' : '#e2e8f0'}" stroke="${lit ? '#d97706' : '#cbd5e1'}" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span class="star-label" style="font-weight:${isCurrent ? '700' : '500'};color:${isCurrent ? '#ea580c' : (lit ? '#b45309' : '#64748b')};">${q.labels[i - 1]}</span>
+          ${svgPaw(lit)}
+          <span class="paw-label" style="font-weight:${isCurrent ? '700' : '500'};color:${isCurrent ? '#ea580c' : (lit ? '#b45309' : '#64748b')};">${q.labels[i - 1]}</span>
         `;
-        btn.addEventListener('mouseenter', () => { state.hoverScore = i; updateStarsAndFox(); });
-        btn.addEventListener('mouseleave', () => { state.hoverScore = null; updateStarsAndFox(); });
+        btn.addEventListener('mouseenter', () => { state.hoverScore = i; updatePawsAndFox(); });
+        btn.addEventListener('mouseleave', () => { state.hoverScore = null; updatePawsAndFox(); });
         btn.addEventListener('click', () => { state.score = i; state.action = 'pending'; render(); });
-        starsRow.appendChild(btn);
+        pawsRow.appendChild(btn);
       }
     }
 
-    function updateStarsAndFox() {
-      renderStars();
+    function updatePawsAndFox() {
+      renderPaws();
       updateFoxExpression(state.hoverScore ?? state.score);
     }
 
@@ -496,7 +510,7 @@
         satisfaction_score: state.action === 'closed' ? null : state.score
       };
       payloadBox.textContent = JSON.stringify(payload, null, 2);
-      statusPill.textContent = state.action === 'submitted' ? 'submitted (记分)' : state.action === 'closed' ? 'closed (不记分/扣配额)' : (state.score ? `已选 ${state.score} 星` : '曝光中');
+      statusPill.textContent = state.action === 'submitted' ? 'submitted (记分)' : state.action === 'closed' ? 'closed (不记分/扣配额)' : (state.score ? `已选 ${state.score} 个爪印` : '曝光中');
     }
 
     function render() {
@@ -516,7 +530,7 @@
         popupCard.classList.add('hidden');
         resultState.classList.remove('hidden');
         document.getElementById('result-title').textContent = state.action === 'submitted'
-          ? `小狐狸收到啦（${state.score} 星）！正在进入下一个游戏…`
+          ? `小狐狸收到啦（${state.score} 分）！正在进入下一个游戏…`
           : '已关闭弹窗（不记分数），正在进入下一个游戏…';
         document.getElementById('result-desc').textContent = `已扣减 1 次课程弹窗额度 · 本课程剩余配额：${sc.quotaLeftAfter}`;
       }
@@ -532,7 +546,7 @@
         btnSubmit.style.color = '#94a3b8';
         btnSubmit.style.cursor = 'not-allowed';
       }
-      updateStarsAndFox();
+      updatePawsAndFox();
       renderPayload();
     }
 
