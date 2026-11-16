@@ -34,11 +34,7 @@
       border-bottom: 1px solid #f1f5f9;
       font-size: 12px;
     }
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
     .scene-tab {
       padding: 5px 10px;
       border-radius: 8px;
@@ -50,21 +46,9 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
-    .scene-tab:hover {
-      border-color: #cbd5e1;
-      color: #0f172a;
-    }
-    .scene-tab.active {
-      background: #ea580c;
-      border-color: #ea580c;
-      color: #ffffff;
-    }
-    .q-picker {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #64748b;
-    }
+    .scene-tab:hover { border-color: #cbd5e1; color: #0f172a; }
+    .scene-tab.active { background: #ea580c; border-color: #ea580c; color: #ffffff; }
+    .q-picker { display: flex; align-items: center; gap: 6px; color: #64748b; }
     .q-picker select {
       background: #f8fafc;
       color: #0f172a;
@@ -81,15 +65,13 @@
       gap: 14px;
       align-items: stretch;
     }
-    @media (max-width: 720px) {
-      .main-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 720px) { .main-grid { grid-template-columns: 1fr; } }
     .viewport {
       position: relative;
       border-radius: 14px;
       background: radial-gradient(circle at 50% 24%, #26354d 0%, #0f172a 100%);
       border: 1px solid #1e293b;
-      min-height: 368px;
+      min-height: 360px;
       padding: 62px 18px 18px;
       display: flex;
       align-items: center;
@@ -110,11 +92,11 @@
     .popup-card {
       position: relative;
       width: 100%;
-      max-width: 370px;
+      max-width: 376px;
       background: #fffdf7;
       border: 2px solid #fbbf24;
       border-radius: 18px;
-      padding: 30px 20px 16px;
+      padding: 34px 20px 18px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.42);
       color: #1e293b;
     }
@@ -152,80 +134,55 @@
       justify-content: center;
       transition: background 0.15s;
     }
-    .btn-close:hover {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-    .badge-row {
-      text-align: center;
-      margin-bottom: 6px;
-    }
-    .ctx-badge {
-      display: inline-block;
-      background: #ffedd5;
-      color: #c2410c;
-      font-size: 11.5px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 999px;
-    }
+    .btn-close:hover { background: #fee2e2; color: #dc2626; }
     .q-title {
       text-align: center;
       font-size: 18px;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
     .fox-speech {
       text-align: center;
       font-size: 12px;
       color: #9a3412;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
-    .stars-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 5px;
+    .stars-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin-bottom: 16px;
     }
-    .star-btn {
+    .star-col {
       background: transparent;
       border: none;
-      padding: 3px;
+      padding: 4px 2px;
+      border-radius: 8px;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
       transition: transform 0.15s ease;
     }
-    .star-btn:hover { transform: scale(1.15); }
-    .star-btn:active { transform: scale(0.94); }
-    .scale-labels {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 8px;
-      margin-bottom: 14px;
-      font-size: 11.5px;
-      color: #64748b;
-      font-weight: 500;
-    }
-    .scale-selected {
-      color: #ea580c;
-      font-weight: 700;
+    .star-col:hover { transform: translateY(-2px) scale(1.06); }
+    .star-col:active { transform: scale(0.96); }
+    .star-label {
+      font-size: 12px;
+      line-height: 1.2;
+      white-space: nowrap;
     }
     .btn-submit {
       width: 100%;
-      padding: 9px 0;
+      padding: 9.5px 0;
       border-radius: 12px;
       border: none;
       font-size: 14px;
       font-weight: 700;
       transition: opacity 0.15s;
     }
-    .result-box {
-      text-align: center;
-      color: #f8fafc;
-      padding: 0 16px;
-    }
+    .result-box { text-align: center; color: #f8fafc; padding: 0 16px; }
     .result-box .emoji { font-size: 28px; margin-bottom: 6px; }
     .result-box .r-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
     .result-box .r-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 12px; }
@@ -376,21 +333,12 @@
 
           <button id="btn-close" class="btn-close" title="主动关闭（不记分，扣减1次课程配额）">✕</button>
 
-          <div class="badge-row">
-            <span id="context-badge" class="ctx-badge">星际记忆矩阵 · 本课时已完成 3/3 次</span>
-          </div>
           <h3 id="question-title" class="q-title">喜欢这个游戏吗？</h3>
           <p id="fox-speech" class="fox-speech">小狐狸想听听你的真实感受，点一点星星吧～</p>
 
-          <div id="stars-row" class="stars-row"></div>
+          <div id="stars-row" class="stars-grid"></div>
 
-          <div class="scale-labels">
-            <span id="label-min">1星：一点也不</span>
-            <span id="label-selected" class="scale-selected">请点击星星评分</span>
-            <span id="label-max">5星：超级喜欢</span>
-          </div>
-
-          <button id="btn-submit" class="btn-submit" disabled>提交并进入下一个游戏</button>
+          <button id="btn-submit" class="btn-submit" disabled>提交</button>
         </div>
 
         <div id="result-state" class="result-box hidden">
@@ -410,8 +358,8 @@
           <pre id="payload-box"></pre>
         </div>
         <div class="ins-foot">
-          <div>• <strong>IP 亲和引导</strong>：卡通小狐狸搭在弹窗上沿互动，随选星呈现倾听/微笑/开心表情（“难吗”保持中性鼓励）。</div>
-          <div>• <strong>防误判与防空交</strong>：标明 1星/5星两端语义；未选星置灰，点 ✕ 记 <code>closed</code> 且分数为 <code>null</code>。</div>
+          <div>• <strong>逐星文字标注</strong>：1～5 星每颗下方均写出对应语义词，学生一眼看懂每一档含义。</div>
+          <div>• <strong>极简操作按钮</strong>：未选星时“提交”置灰防空交；点 ✕ 记 <code>closed</code> 且分数为 <code>null</code>。</div>
         </div>
       </div>
     </div>
@@ -419,53 +367,29 @@
 
   <script>
     const GAME_QUESTIONS = {
-      rate_overall: {
-        dim: '总体评分', title: '喜欢这个游戏吗？',
-        min: '1星：一点也不', max: '5星：超级喜欢',
-        words: ['一点也不喜欢', '不太喜欢', '一般般', '比较喜欢', '超级喜欢！']
-      },
-      rate_guidance: {
-        dim: '教程引导', title: '你清楚这个游戏的规则吗？',
-        min: '1星：完全不懂', max: '5星：非常清楚',
-        words: ['完全没看懂', '有点迷糊', '大概明白', '比较清楚', '非常清楚！']
-      },
-      rate_ui: {
-        dim: '界面体验', title: '你喜欢这个游戏的画面吗？',
-        min: '1星：不喜欢', max: '5星：非常好看',
-        words: ['一点不喜欢', '不太好看', '一般般', '挺好看的', '非常好看！']
-      },
-      rate_interaction: {
-        dim: '操作体验', title: '你觉得这个游戏好不好操作？',
-        min: '1星：很难按准', max: '5星：非常顺手',
-        words: ['很难操作', '不太顺手', '一般般', '比较好用', '非常顺手！']
-      },
-      rate_fun: {
-        dim: '游戏趣味性', title: '你喜欢这个游戏的玩法吗？',
-        min: '1星：很无聊', max: '5星：太好玩了',
-        words: ['觉得很无聊', '不太好玩', '一般般', '挺好玩的', '太好玩了！']
-      }
+      rate_overall: { title: '喜欢这个游戏吗？', labels: ['很不喜欢', '不太喜欢', '一般', '比较喜欢', '非常喜欢'] },
+      rate_guidance: { title: '你清楚这个游戏的规则吗？', labels: ['完全不懂', '不太清楚', '一般', '比较清楚', '非常清楚'] },
+      rate_ui: { title: '你喜欢这个游戏的画面吗？', labels: ['很不喜欢', '不太喜欢', '一般', '比较喜欢', '非常喜欢'] },
+      rate_interaction: { title: '你觉得这个游戏好不好操作？', labels: ['很难操作', '不太顺手', '一般', '比较顺手', '非常顺手'] },
+      rate_fun: { title: '你喜欢这个游戏的玩法吗？', labels: ['很无聊', '不太好玩', '一般', '比较好玩', '非常好玩'] }
     };
 
     const SCENES = {
       l2: {
         lesson_no: 2, quotaLeftAfter: '2 / 3 次',
         hudLeft: '专注力训练课 · 第 2 课时',
-        badge: '星际记忆矩阵 · 本课时已完成 3/3 次',
         stage: 6, trigger: '节点1_第2课时游戏评价', type: 'game'
       },
       l10: {
         lesson_no: 10, quotaLeftAfter: '1 / 3 次',
         hudLeft: '专注力训练课 · 第 10 课时',
-        badge: '方块旋转 · 第 9 关（最后一次正式完成）',
         stage: 9, trigger: '节点2_第10课时关卡难度评价', type: 'diff',
-        item_id: 'rate_difficulty', dim: '难度适配', title: '你觉得这一关难吗？',
-        min: '1星：一点不难', max: '5星：非常难',
-        words: ['一点也不难', '不太难', '难度适中', '有点难', '非常难！']
+        item_id: 'rate_difficulty', title: '你觉得这一关难吗？',
+        labels: ['一点不难', '不太难', '难度适中', '有点难', '非常难']
       },
       l18: {
         lesson_no: 18, quotaLeftAfter: '0 / 3 次（本课程配额全部完成）',
         hudLeft: '专注力训练课 · 第 18 课时',
-        badge: '森林寻踪 · 本课时已完成 2/2 次',
         stage: 14, trigger: '节点3_第18课时游戏评价_避重抽取', type: 'game'
       }
     };
@@ -483,9 +407,7 @@
 
     function getCurrentQ() {
       const sc = SCENES[state.sceneKey];
-      if (sc.type === 'diff') {
-        return { item_id: sc.item_id, dim: sc.dim, title: sc.title, min: sc.min, max: sc.max, words: sc.words };
-      }
+      if (sc.type === 'diff') return { item_id: sc.item_id, title: sc.title, labels: sc.labels };
       return { item_id: state.gameItemKey, ...GAME_QUESTIONS[state.gameItemKey] };
     }
 
@@ -532,26 +454,28 @@
 
     function renderStars() {
       starsRow.innerHTML = '';
+      const q = getCurrentQ();
       const activeVal = state.hoverScore ?? state.score ?? 0;
       for (let i = 1; i <= 5; i++) {
         const lit = i <= activeVal;
+        const isCurrent = i === activeVal;
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'star-btn';
-        btn.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="${lit ? '#f59e0b' : '#e2e8f0'}" stroke="${lit ? '#d97706' : '#cbd5e1'}" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-        btn.addEventListener('mouseenter', () => { state.hoverScore = i; updateLabelsAndStars(); });
-        btn.addEventListener('mouseleave', () => { state.hoverScore = null; updateLabelsAndStars(); });
+        btn.className = 'star-col';
+        btn.innerHTML = `
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="${lit ? '#f59e0b' : '#e2e8f0'}" stroke="${lit ? '#d97706' : '#cbd5e1'}" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span class="star-label" style="font-weight:${isCurrent ? '700' : '500'};color:${isCurrent ? '#ea580c' : (lit ? '#b45309' : '#64748b')};">${q.labels[i - 1]}</span>
+        `;
+        btn.addEventListener('mouseenter', () => { state.hoverScore = i; updateStarsAndFox(); });
+        btn.addEventListener('mouseleave', () => { state.hoverScore = null; updateStarsAndFox(); });
         btn.addEventListener('click', () => { state.score = i; state.action = 'pending'; render(); });
         starsRow.appendChild(btn);
       }
     }
 
-    function updateLabelsAndStars() {
+    function updateStarsAndFox() {
       renderStars();
-      const q = getCurrentQ();
-      const activeVal = state.hoverScore ?? state.score;
-      document.getElementById('label-selected').textContent = activeVal ? `${activeVal} 星 · ${q.words[activeVal - 1]}` : '请点击星星评分';
-      updateFoxExpression(activeVal);
+      updateFoxExpression(state.hoverScore ?? state.score);
     }
 
     function renderPayload() {
@@ -567,7 +491,6 @@
         content_version: 'v1.4.0',
         stage: sc.stage,
         stage_type: '正式关',
-        satisfaction_dimension: q.dim,
         satisfaction_item_id: q.item_id,
         satisfaction_score: state.action === 'closed' ? null : state.score
       };
@@ -583,10 +506,7 @@
       });
       gameQWrap.style.display = sc.type === 'game' ? 'flex' : 'none';
       document.getElementById('bg-hud-left').textContent = sc.hudLeft;
-      document.getElementById('context-badge').textContent = sc.badge;
       document.getElementById('question-title').textContent = q.title;
-      document.getElementById('label-min').textContent = q.min;
-      document.getElementById('label-max').textContent = q.max;
 
       if (state.action === 'pending') {
         popupCard.classList.remove('hidden');
@@ -611,7 +531,7 @@
         btnSubmit.style.color = '#94a3b8';
         btnSubmit.style.cursor = 'not-allowed';
       }
-      updateLabelsAndStars();
+      updateStarsAndFox();
       renderPayload();
     }
 
