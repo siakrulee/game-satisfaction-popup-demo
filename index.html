@@ -34,11 +34,32 @@
       border-bottom: 1px solid #f1f5f9;
       font-size: 12px;
     }
-    .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-    .scene-tab {
-      padding: 5px 10px;
+    .left-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .biz-switch {
+      display: inline-flex;
       border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+      margin-right: 4px;
+    }
+    .biz-tab {
+      padding: 5px 9px;
       font-size: 12px;
+      font-weight: 700;
+      border: none;
+      background: #f8fafc;
+      color: #64748b;
+      cursor: pointer;
+    }
+    .biz-tab.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 5px; }
+    .scene-tab {
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 11.5px;
       font-weight: 600;
       border: 1px solid #e2e8f0;
       background: #f8fafc;
@@ -48,13 +69,13 @@
     }
     .scene-tab:hover { border-color: #cbd5e1; color: #0f172a; }
     .scene-tab.active { background: #ea580c; border-color: #ea580c; color: #ffffff; }
-    .q-picker { display: flex; align-items: center; gap: 6px; color: #64748b; }
+    .q-picker { display: flex; align-items: center; gap: 5px; color: #64748b; }
     .q-picker select {
       background: #f8fafc;
       color: #0f172a;
       border: 1px solid #cbd5e1;
       border-radius: 7px;
-      padding: 4px 8px;
+      padding: 4px 7px;
       font-size: 12px;
       outline: none;
       cursor: pointer;
@@ -71,7 +92,7 @@
       border-radius: 14px;
       background: radial-gradient(circle at 50% 24%, #26354d 0%, #0f172a 100%);
       border: 1px solid #1e293b;
-      min-height: 360px;
+      min-height: 364px;
       padding: 62px 18px 18px;
       display: flex;
       align-items: center;
@@ -87,7 +108,7 @@
       justify-content: space-between;
       font-size: 11.5px;
       color: #cbd5e1;
-      opacity: 0.72;
+      opacity: 0.75;
     }
     .popup-card {
       position: relative;
@@ -228,8 +249,8 @@
     }
     pre {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11.5px;
-      line-height: 1.55;
+      font-size: 11.2px;
+      line-height: 1.5;
       color: #1e293b;
       white-space: pre-wrap;
       word-break: break-all;
@@ -239,7 +260,7 @@
       padding-top: 8px;
       border-top: 1px solid #e2e8f0;
       color: #475569;
-      line-height: 1.5;
+      line-height: 1.48;
       font-size: 11.5px;
     }
     .ins-foot strong { color: #0f172a; }
@@ -249,13 +270,15 @@
 <body>
   <div class="wrap">
     <div class="topbar">
-      <div class="tabs">
-        <button data-scene="l2" class="scene-tab active">第2课时 · 游戏评价(1/3)</button>
-        <button data-scene="l10" class="scene-tab">第10课时 · 关卡难度(2/3)</button>
-        <button data-scene="l18" class="scene-tab">第18课时 · 游戏评价(3/3)</button>
+      <div class="left-controls">
+        <div class="biz-switch">
+          <button data-biz="B" class="biz-tab active">B端(24课时)</button>
+          <button data-biz="C" class="biz-tab">C端(每30课时1次)</button>
+        </div>
+        <div id="scene-tabs" class="tabs"></div>
       </div>
       <label id="game-q-wrap" class="q-picker">
-        <span>抽中题目:</span>
+        <span>抽题:</span>
         <select id="game-q-select">
           <option value="rate_overall">总体评分 · 喜欢这个游戏吗？</option>
           <option value="rate_guidance">教程引导 · 你清楚这个游戏的规则吗？</option>
@@ -269,7 +292,7 @@
     <div class="main-grid">
       <div class="viewport">
         <div class="hud">
-          <span id="bg-hud-left">专注力训练课 · 第 2 课时</span>
+          <span id="bg-hud-left">B端课程(24课时) · 第 2 课时</span>
           <span>本游戏次数 3/3 已完成 · 即将进入下一游戏</span>
         </div>
 
@@ -332,7 +355,7 @@
             </svg>
           </div>
 
-          <button id="btn-close" class="btn-close" title="主动关闭（不记分，扣减1次课程配额）">✕</button>
+          <button id="btn-close" class="btn-close" title="主动关闭（不记分，扣减1次当前节点额度）">✕</button>
 
           <h3 id="question-title" class="q-title">喜欢这个游戏吗？</h3>
           <p id="fox-speech" class="fox-speech">小狐狸想听听你的真实感受，点一点爪印吧～</p>
@@ -345,7 +368,7 @@
         <div id="result-state" class="result-box hidden">
           <div class="emoji">🦊</div>
           <div id="result-title" class="r-title">小狐狸收到啦！正在进入下一个游戏…</div>
-          <div id="result-desc" class="r-desc">本课程剩余弹窗配额：2 / 3 次</div>
+          <div id="result-desc" class="r-desc"></div>
           <button id="btn-reset" class="btn-reset">重新预览弹窗</button>
         </div>
       </div>
@@ -359,8 +382,8 @@
           <pre id="payload-box"></pre>
         </div>
         <div class="ins-foot">
-          <div>• <strong>小狐狸爪印图标</strong>：呼应品牌 IP 且与游戏内通关五角星完全区分，每档下方标明对应文字。</div>
-          <div>• <strong>极简操作按钮</strong>：未选时“提交”置灰防空交；点 ✕ 记 <code>closed</code> 且分数为 <code>null</code>。</div>
+          <div>• <strong>B端规则</strong>：固定 24 课时最多 3 次（第 2、18 课时游戏评价，第 10 课时关卡难度）。</div>
+          <div>• <strong>C端规则</strong>：每 30 课时 1 次（第 6、36、66、96… 课时），奇偶次交替弹游戏评价与难度题。</div>
         </div>
       </div>
     </div>
@@ -375,29 +398,30 @@
       rate_fun: { title: '你喜欢这个游戏的玩法吗？', labels: ['很不喜欢', '不太喜欢', '一般', '喜欢', '非常喜欢'] }
     };
 
-    const SCENES = {
-      l2: {
-        lesson_no: 2, quotaLeftAfter: '2 / 3 次',
-        hudLeft: '专注力训练课 · 第 2 课时',
-        stage: 6, trigger: '节点1_第2课时游戏评价', type: 'game'
-      },
-      l10: {
-        lesson_no: 10, quotaLeftAfter: '1 / 3 次',
-        hudLeft: '专注力训练课 · 第 10 课时',
-        stage: 9, trigger: '节点2_第10课时关卡难度评价', type: 'diff',
-        item_id: 'rate_difficulty', title: '你觉得这一关难吗？',
-        labels: ['太简单', '有点简单', '刚刚好', '有点难', '太难了']
-      },
-      l18: {
-        lesson_no: 18, quotaLeftAfter: '0 / 3 次（本课程配额全部完成）',
-        hudLeft: '专注力训练课 · 第 18 课时',
-        stage: 14, trigger: '节点3_第18课时游戏评价_避重抽取', type: 'game'
-      }
+    const DIFF_QUESTION = {
+      item_id: 'rate_difficulty',
+      title: '你觉得这一关难吗？',
+      labels: ['太简单', '有点简单', '刚刚好', '有点难', '太难了']
     };
 
-    let state = { sceneKey: 'l2', gameItemKey: 'rate_overall', score: null, hoverScore: null, action: 'pending' };
+    const BIZ_SCENES = {
+      B: [
+        { key: 'b_2', tab: '第2课时·游戏(1/3)', lesson_no: 2, hud: 'B端课程(24课时) · 第 2 课时', stage: 6, trigger: 'B端_节点1_第2课时游戏评价', type: 'game', afterNote: 'B端本课程剩余配额：2 / 3 次' },
+        { key: 'b_10', tab: '第10课时·难度(2/3)', lesson_no: 10, hud: 'B端课程(24课时) · 第 10 课时', stage: 9, trigger: 'B端_节点2_第10课时关卡难度评价', type: 'diff', afterNote: 'B端本课程剩余配额：1 / 3 次' },
+        { key: 'b_18', tab: '第18课时·游戏(3/3)', lesson_no: 18, hud: 'B端课程(24课时) · 第 18 课时', stage: 14, trigger: 'B端_节点3_第18课时游戏评价_避重', type: 'game', afterNote: 'B端本课程剩余配额：0 / 3 次' }
+      ],
+      C: [
+        { key: 'c_6', tab: '第6课时·游戏(奇)', lesson_no: 6, hud: 'C端课程(例:120课时) · 第 6 课时', stage: 5, trigger: 'C端_第1次(第6课时)_游戏评价', type: 'game', afterNote: '下一触发周期节点：第 36 课时（关卡难度评价）' },
+        { key: 'c_36', tab: '第36课时·难度(偶)', lesson_no: 36, hud: 'C端课程(例:120课时) · 第 36 课时', stage: 12, trigger: 'C端_第2次(第36课时)_关卡难度评价', type: 'diff', afterNote: '下一触发周期节点：第 66 课时（游戏评价）' },
+        { key: 'c_66', tab: '第66课时·游戏(奇)', lesson_no: 66, hud: 'C端课程(例:120课时) · 第 66 课时', stage: 18, trigger: 'C端_第3次(第66课时)_游戏评价_避重', type: 'game', afterNote: '下一触发周期节点：第 96 课时（关卡难度评价）' },
+        { key: 'c_96', tab: '第96课时·难度(偶)', lesson_no: 96, hud: 'C端课程(例:120课时) · 第 96 课时', stage: 24, trigger: 'C端_第4次(第96课时)_关卡难度评价', type: 'diff', afterNote: '下一触发周期节点：第 126 课时（超出120课时则结束）' }
+      ]
+    };
+
+    let state = { biz: 'B', sceneIdx: 0, gameItemKey: 'rate_overall', score: null, hoverScore: null, action: 'pending' };
 
     const pawsRow = document.getElementById('paws-row');
+    const sceneTabsEl = document.getElementById('scene-tabs');
     const gameQWrap = document.getElementById('game-q-wrap');
     const gameQSelect = document.getElementById('game-q-select');
     const popupCard = document.getElementById('popup-card');
@@ -406,9 +430,10 @@
     const payloadBox = document.getElementById('payload-box');
     const statusPill = document.getElementById('status-pill');
 
+    function getCurrentScene() { return BIZ_SCENES[state.biz][state.sceneIdx]; }
     function getCurrentQ() {
-      const sc = SCENES[state.sceneKey];
-      if (sc.type === 'diff') return { item_id: sc.item_id, title: sc.title, labels: sc.labels };
+      const sc = getCurrentScene();
+      if (sc.type === 'diff') return DIFF_QUESTION;
       return { item_id: state.gameItemKey, ...GAME_QUESTIONS[state.gameItemKey] };
     }
 
@@ -496,15 +521,16 @@
     }
 
     function renderPayload() {
-      const sc = SCENES[state.sceneKey];
+      const sc = getCurrentScene();
       const q = getCurrentQ();
       const payload = {
-        course_id: 'course_demo_01',
+        business_type: state.biz,
+        course_id: state.biz === 'B' ? 'course_b_24' : 'course_c_120',
         lesson_no: sc.lesson_no,
-        popup_id: `pop_${sc.lesson_no}_8f3a21`,
+        popup_id: `pop_${state.biz.toLowerCase()}_${sc.lesson_no}_8f3a`,
         trigger_reason: sc.trigger,
         popup_action: state.action === 'pending' ? '(等待操作)' : state.action,
-        ContentId: state.sceneKey === 'l18' ? 'game_demo_02' : 'game_demo_01',
+        ContentId: sc.lesson_no >= 18 ? 'game_demo_02' : 'game_demo_01',
         content_version: 'v1.4.0',
         stage: sc.stage,
         stage_type: '正式关',
@@ -512,17 +538,34 @@
         satisfaction_score: state.action === 'closed' ? null : state.score
       };
       payloadBox.textContent = JSON.stringify(payload, null, 2);
-      statusPill.textContent = state.action === 'submitted' ? 'submitted (记分)' : state.action === 'closed' ? 'closed (不记分/扣配额)' : (state.score ? `已选 ${state.score} 个爪印` : '曝光中');
+      statusPill.textContent = state.action === 'submitted' ? 'submitted (记分)' : state.action === 'closed' ? 'closed (不记分/扣额度)' : (state.score ? `已选 ${state.score} 个爪印` : '曝光中');
     }
 
     function render() {
-      const sc = SCENES[state.sceneKey];
+      const sc = getCurrentScene();
       const q = getCurrentQ();
-      document.querySelectorAll('.scene-tab').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.scene === state.sceneKey);
+      document.querySelectorAll('.biz-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.biz === state.biz);
       });
+
+      sceneTabsEl.innerHTML = '';
+      BIZ_SCENES[state.biz].forEach((item, idx) => {
+        const b = document.createElement('button');
+        b.className = 'scene-tab' + (idx === state.sceneIdx ? ' active' : '');
+        b.textContent = item.tab;
+        b.addEventListener('click', () => {
+          state.sceneIdx = idx;
+          if (idx >= 2 && state.gameItemKey === 'rate_overall') {
+            state.gameItemKey = 'rate_fun';
+            gameQSelect.value = 'rate_fun';
+          }
+          state.score = null; state.action = 'pending'; render();
+        });
+        sceneTabsEl.appendChild(b);
+      });
+
       gameQWrap.style.display = sc.type === 'game' ? 'flex' : 'none';
-      document.getElementById('bg-hud-left').textContent = sc.hudLeft;
+      document.getElementById('bg-hud-left').textContent = sc.hud;
       document.getElementById('question-title').textContent = q.title;
 
       if (state.action === 'pending') {
@@ -534,7 +577,7 @@
         document.getElementById('result-title').textContent = state.action === 'submitted'
           ? `小狐狸收到啦（${state.score} 分）！正在进入下一个游戏…`
           : '已关闭弹窗（不记分数），正在进入下一个游戏…';
-        document.getElementById('result-desc').textContent = `已扣减 1 次课程弹窗额度 · 本课程剩余配额：${sc.quotaLeftAfter}`;
+        document.getElementById('result-desc').textContent = `已扣减当前节点额度 · ${sc.afterNote}`;
       }
 
       if (state.score) {
@@ -552,15 +595,8 @@
       renderPayload();
     }
 
-    document.querySelectorAll('.scene-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.sceneKey = btn.dataset.scene;
-        if (state.sceneKey === 'l18' && state.gameItemKey === 'rate_overall') {
-          state.gameItemKey = 'rate_fun';
-          gameQSelect.value = 'rate_fun';
-        }
-        state.score = null; state.action = 'pending'; render();
-      });
+    document.querySelectorAll('.biz-tab').forEach(btn => {
+      btn.addEventListener('click', () => { state.biz = btn.dataset.biz; state.sceneIdx = 0; state.score = null; state.action = 'pending'; render(); });
     });
     gameQSelect.addEventListener('change', (e) => { state.gameItemKey = e.target.value; state.score = null; state.action = 'pending'; render(); });
     btnSubmit.addEventListener('click', () => { if (!state.score) return; state.action = 'submitted'; render(); });
